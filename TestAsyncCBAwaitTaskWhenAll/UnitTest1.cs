@@ -28,9 +28,18 @@ namespace TestAsyncCBAwaitTaskWhenAll
             });
         }
 
-        private async Task Count()
+        static private async Task Count()
         {
-            await Parallel.ForEachAsync(new int[] { 1, 2, 3 }, async (x, y) => await Task.Delay(1000, y).ContinueWith(t => Assert.Equal(1, x)));
+            await Parallel
+                .ForEachAsync(new int[] { 1, 2, 3 },
+                async (x, y) =>
+                await Test(x));
+        }
+
+        static private async Task Test(int x)
+        {
+            await Task.Delay(1000);
+            Assert.Equal(1, x);
         }
     }
 }
