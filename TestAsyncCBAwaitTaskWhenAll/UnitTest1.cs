@@ -8,7 +8,7 @@ namespace TestAsyncCBAwaitTaskWhenAll
     {
         static Task ExpectAsync(Func<Task> actionAsync)
         {
-            return actionAsync();
+            return Task.Run(actionAsync);
         }
 
         static async Task ExpectLogNoWarningsNorErrors2(Func<Task> actionAsync)
@@ -24,8 +24,13 @@ namespace TestAsyncCBAwaitTaskWhenAll
         {
             await ExpectLogNoWarningsNorErrors2(async () =>
             {
-                await Task.Delay(1000);
+                await Count();
             });
+        }
+
+        private async Task Count()
+        {
+            await Parallel.ForEachAsync(new int[] { 1, 2, 3 }, async (x, y) => await Task.Delay(1000, y).ContinueWith(t => Assert.Equal(1, x)));
         }
     }
 }
